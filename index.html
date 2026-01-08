@@ -33,7 +33,8 @@ input {
 }
 button {
   flex: 1;
-  padding: 8px;
+  padding: 10px;
+  font-size: 15px;
   cursor: pointer;
 }
 </style>
@@ -88,7 +89,7 @@ const duplex = [
   {id:35, n1:"", n2:""}
 ];
 
-// ===== FUNÇÕES =====
+
 function render() {
   const busca = document.getElementById("busca").value;
   const lista = document.getElementById("lista");
@@ -103,12 +104,7 @@ function render() {
 
           <div class="buttons">
             <button onclick="call('${d.n1}')">📞 Chamar 1</button>
-            <button onclick="video('${d.n1}')">🎥 Vídeo 1</button>
-          </div>
-
-          <div class="buttons">
             <button onclick="call('${d.n2}')">📞 Chamar 2</button>
-            <button onclick="video('${d.n2}')">🎥 Vídeo 2</button>
           </div>
         </div>
       `;
@@ -116,13 +112,11 @@ function render() {
 }
 
 function call(num) {
-  if (!num) return alert("Número não cadastrado");
+  if (!num) {
+    alert("Unidade sem número cadastrado");
+    return;
+  }
   window.location.href = `https://wa.me/55${num}`;
-}
-
-function video(num) {
-  if (!num) return alert("Número não cadastrado");
-  window.location.href = `https://wa.me/55${num}?text=Chamada%20de%20vídeo`;
 }
 
 render();
