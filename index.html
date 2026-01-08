@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Interfone QR Code - 35 Dúplex</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: Arial, sans-serif; background:#f4f4f4; margin:0; padding:10px; }
+h1,h2 { text-align:center; }
+input, button { padding:8px; margin:5px 0; width:100%; }
+.card { background:#fff; padding:10px; margin:8px 0; border-radius:6px; box-shadow:0 0 5px #ccc; }
+.flex { display:flex; gap:5px; }
+.flex button { flex:1; }
+.hidden { display:none; }
+.admin-btn { position:fixed; bottom:10px; right:10px; }
+</style>
+</head>
+<body>
+
+<h1>📱 Interfone QR Code</h1>
+<input type="text" id="search" placeholder="Buscar dúplex..." onkeyup="render()">
+
+<div id="lista"></div>
+
+<button class="admin-btn" onclick="openAdmin()">⚙ Admin</button>
+
+<div id="login" class="hidden">
+  <h2>Login Administrador</h2>
+  <input id="loginUser" placeholder="Usuário">
+  <input id="loginPass" type="password" placeholder="Senha">
+  <button onclick="login()">Entrar</button>
+  <button onclick="closeAdmin()">Cancelar</button>
+</div>
+
+<div id="admin" class="hidden">
+  <h2>Painel Administrativo</h2>
+  <div id="adminList"></div>
+  <button onclick="logout()">Sair</button>
+</div>
+
+<script>
+const TOTAL = 35;
+let data = JSON.parse(localStorage.getItem("duplex")) || [];
+
+if (data.length === 0) {
+  for (let i = 1; i <= TOTAL; i++) {
+    data.push({ id: i, n1: "", n2: "" });
+  }
+  localStorage.setItem("duplex", JSON.stringify(data));
+}
+
+function render() {
+  const busca = document.getElementById("search").value;
+  const lista = document.getElementById("lista");
+  lista.innerHTML = "";
+  data.filter(d => d.id.toString().includes(busca)).forEach(d => {
+    lista.innerHTML += `
+    <div class="card">
+      <strong>Dúplex ${d.id}</strong>
+      <div class="flex">
+        <button onclick="call('${d.n1}')">📞 Chamar 1</button>
+        <button onclick="video('${d.n1}')">🎥 Vídeo 1</button>
+      </div>
+      <div class="flex">
+        <button onclick="call('${d.n2}')">📞 Chamar 2</button>
+        <button onclick="video('${d.n2}')">🎥 Vídeo 2</button>
+      </div>
+    </div>`;
+  });
+}
+
+function call(num) {
+  if (!num) return alert("Número não cadastrado");
+  window.location.href = `https://wa.me/55${num}`;
+}
+
+function video(num) {
+  if (!num) return alert("Número não cadastrado");
+  window.location.href = `https://wa.me/55${num}?text=Chamada%20de%20vídeo`;
+}
+
+function openAdmin() {
+  document.getElementById("login").classList.remove("hidden");
+}
+
+function closeAdmin() {
+  document.getElementById("login").classList.add("hidden");
+}
+
+function login() {
+  const u = document.getElementById("loginUser").value;
+  const p = document.getElementById("loginPass").value;
+  if (u === "adimin" && p === "CMAadmin") {
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("admin").classList.remove("hidden");
+    adminRender();
+  } else {
+    alert("Login inválido");
+  }
+}
+
+function adminRender() {
+  const admin = document.getElementById("adminList");
+  admin.innerHTML = "";
+  data.forEach((d, i) => {
+    admin.innerHTML += `
+    <div class="card">
+      <strong>Dúplex ${d.id}</strong>
+      <input placeholder="Número 1" value="${d.n1}" onchange="save(${i}, this.value, 1)">
+      <input placeholder="Número 2" value="${d.n2}" onchange="save(${i}, this.value, 2)">
+    </div>`;
+  });
+}
+
+function save(i, val, n) {
+  if (n === 1) data[i].n1 = val;
+  if (n === 2) data[i].n2 = val;
+  localStorage.setItem("duplex", JSON.stringify(data));
+  render();
+}
+
+function logout() {
+  document.getElementById("admin").classList.add("hidden");
+}
+
+render();
+</script>
+
+</body>
+</html>
