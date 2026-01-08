@@ -2,71 +2,117 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Interfone QR Code - 35 Dúplex</title>
+<title>Interfone QR Code</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-body { font-family: Arial, sans-serif; background:#f4f4f4; margin:0; padding:10px; }
-h1,h2 { text-align:center; }
-input, button { padding:8px; margin:5px 0; width:100%; }
-.card { background:#fff; padding:10px; margin:8px 0; border-radius:6px; box-shadow:0 0 5px #ccc; }
-.flex { display:flex; gap:5px; }
-.flex button { flex:1; }
-.hidden { display:none; }
-.admin-btn { position:fixed; bottom:10px; right:10px; }
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  padding: 10px;
+}
+h1 {
+  text-align: center;
+}
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.card {
+  background: #fff;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  box-shadow: 0 0 5px #ccc;
+}
+.buttons {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+button {
+  flex: 1;
+  padding: 8px;
+  cursor: pointer;
+}
 </style>
 </head>
+
 <body>
 
-<h1>📱 Interfone QR Code</h1>
-<input type="text" id="search" placeholder="Buscar dúplex..." onkeyup="render()">
+<h1>📱 Interfone</h1>
+
+<input type="text" id="busca" placeholder="Buscar dúplex..." onkeyup="render()">
 
 <div id="lista"></div>
 
-<button class="admin-btn" onclick="openAdmin()">⚙ Admin</button>
-
-<div id="login" class="hidden">
-  <h2>Login Administrador</h2>
-  <input id="loginUser" placeholder="Usuário">
-  <input id="loginPass" type="password" placeholder="Senha">
-  <button onclick="login()">Entrar</button>
-  <button onclick="closeAdmin()">Cancelar</button>
-</div>
-
-<div id="admin" class="hidden">
-  <h2>Painel Administrativo</h2>
-  <div id="adminList"></div>
-  <button onclick="logout()">Sair</button>
-</div>
-
 <script>
-const TOTAL = 35;
-let data = JSON.parse(localStorage.getItem("duplex")) || [];
+// ===== CONFIGURAÇÃO DOS NÚMEROS =====
+// Use apenas DDD + número (ex: 11999999999)
+const duplex = [
+  {id:1, n1:"", n2:""},
+  {id:2, n1:"", n2:""},
+  {id:3, n1:"", n2:""},
+  {id:4, n1:"", n2:""},
+  {id:5, n1:"", n2:""},
+  {id:6, n1:"", n2:""},
+  {id:7, n1:"", n2:""},
+  {id:8, n1:"", n2:""},
+  {id:9, n1:"", n2:""},
+  {id:10, n1:"", n2:""},
+  {id:11, n1:"", n2:""},
+  {id:12, n1:"", n2:""},
+  {id:13, n1:"", n2:""},
+  {id:14, n1:"", n2:""},
+  {id:15, n1:"", n2:""},
+  {id:16, n1:"", n2:""},
+  {id:17, n1:"", n2:""},
+  {id:18, n1:"", n2:""},
+  {id:19, n1:"", n2:""},
+  {id:20, n1:"", n2:""},
+  {id:21, n1:"", n2:""},
+  {id:22, n1:"", n2:""},
+  {id:23, n1:"", n2:""},
+  {id:24, n1:"", n2:""},
+  {id:25, n1:"", n2:""},
+  {id:26, n1:"", n2:""},
+  {id:27, n1:"", n2:""},
+  {id:28, n1:"", n2:""},
+  {id:29, n1:"", n2:""},
+  {id:30, n1:"", n2:""},
+  {id:31, n1:"", n2:""},
+  {id:32, n1:"", n2:""},
+  {id:33, n1:"", n2:""},
+  {id:34, n1:"", n2:""},
+  {id:35, n1:"", n2:""}
+];
 
-if (data.length === 0) {
-  for (let i = 1; i <= TOTAL; i++) {
-    data.push({ id: i, n1: "", n2: "" });
-  }
-  localStorage.setItem("duplex", JSON.stringify(data));
-}
-
+// ===== FUNÇÕES =====
 function render() {
-  const busca = document.getElementById("search").value;
+  const busca = document.getElementById("busca").value;
   const lista = document.getElementById("lista");
   lista.innerHTML = "";
-  data.filter(d => d.id.toString().includes(busca)).forEach(d => {
-    lista.innerHTML += `
-    <div class="card">
-      <strong>Dúplex ${d.id}</strong>
-      <div class="flex">
-        <button onclick="call('${d.n1}')">📞 Chamar 1</button>
-        <button onclick="video('${d.n1}')">🎥 Vídeo 1</button>
-      </div>
-      <div class="flex">
-        <button onclick="call('${d.n2}')">📞 Chamar 2</button>
-        <button onclick="video('${d.n2}')">🎥 Vídeo 2</button>
-      </div>
-    </div>`;
-  });
+
+  duplex
+    .filter(d => d.id.toString().includes(busca))
+    .forEach(d => {
+      lista.innerHTML += `
+        <div class="card">
+          <strong>Dúplex ${d.id}</strong>
+
+          <div class="buttons">
+            <button onclick="call('${d.n1}')">📞 Chamar 1</button>
+            <button onclick="video('${d.n1}')">🎥 Vídeo 1</button>
+          </div>
+
+          <div class="buttons">
+            <button onclick="call('${d.n2}')">📞 Chamar 2</button>
+            <button onclick="video('${d.n2}')">🎥 Vídeo 2</button>
+          </div>
+        </div>
+      `;
+    });
 }
 
 function call(num) {
@@ -77,50 +123,6 @@ function call(num) {
 function video(num) {
   if (!num) return alert("Número não cadastrado");
   window.location.href = `https://wa.me/55${num}?text=Chamada%20de%20vídeo`;
-}
-
-function openAdmin() {
-  document.getElementById("login").classList.remove("hidden");
-}
-
-function closeAdmin() {
-  document.getElementById("login").classList.add("hidden");
-}
-
-function login() {
-  const u = document.getElementById("loginUser").value;
-  const p = document.getElementById("loginPass").value;
-  if (u === "adimin" && p === "CMAadmin") {
-    document.getElementById("login").classList.add("hidden");
-    document.getElementById("admin").classList.remove("hidden");
-    adminRender();
-  } else {
-    alert("Login inválido");
-  }
-}
-
-function adminRender() {
-  const admin = document.getElementById("adminList");
-  admin.innerHTML = "";
-  data.forEach((d, i) => {
-    admin.innerHTML += `
-    <div class="card">
-      <strong>Dúplex ${d.id}</strong>
-      <input placeholder="Número 1" value="${d.n1}" onchange="save(${i}, this.value, 1)">
-      <input placeholder="Número 2" value="${d.n2}" onchange="save(${i}, this.value, 2)">
-    </div>`;
-  });
-}
-
-function save(i, val, n) {
-  if (n === 1) data[i].n1 = val;
-  if (n === 2) data[i].n2 = val;
-  localStorage.setItem("duplex", JSON.stringify(data));
-  render();
-}
-
-function logout() {
-  document.getElementById("admin").classList.add("hidden");
 }
 
 render();
